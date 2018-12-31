@@ -3,14 +3,15 @@ import "./Palette.css"
 
 const Color = ({color, onSelect ,selected}) => {
     return (
-        <span className={`palette-${color} color ${selected? "selected" :""}`} onClick={()=>{onSelect(color)}}></span>
+        <span className={`palette-${color} color ${selected===color? "active" :""}`} onClick={()=>{onSelect(color)}}></span>
     );
 }
 
 class Palette extends Component{
     
     render(){
-        const {colors, selected, onSelect} = this.props;
+        const {colors, onSelect, selected} = this.props;
+        
         return(
             <div className="palette">
                 {

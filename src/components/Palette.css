@@ -1,7 +1,6 @@
 .palette {
-    margin-left: 1rem;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
   }
   
@@ -35,5 +34,5 @@
   }
   
   .color + .color {
-    margin-left: 1rem;
+    margin-left: .5rem;
   }

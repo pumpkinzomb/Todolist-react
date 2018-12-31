@@ -10,9 +10,9 @@ class App extends Component {
   state = {
     input : "",
     todos : [
-      {id:0, text:"리액트 소개", checked: false, color:""},
-      {id:1, text:"리액트 소개", checked: true, color:""},
-      {id:2, text:"리액트 소개", checked: false, color:""}
+      {id:0, text:"오늘의 할 일1", checked: false, color:""},
+      {id:1, text:"클릭하면 체크가 됩니다.", checked: true, color:""},
+      {id:2, text:"글씨 색도 바꿔보세요.", checked: false, color:"color3"}
     ],
     colors : [
       "color1", //#343a40
