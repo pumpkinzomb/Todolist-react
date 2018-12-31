@@ -3,7 +3,6 @@ import "./Form.css"
 import Palette from "./Palette"
 
 const Form = ({value, onChange, onCreate, onKeyPress, colors, onColor, onSelect}) => {
-    
     return(
         <div>
             <Palette colors={colors} selected={onColor} onSelect={onSelect}  />
@@ -12,7 +11,6 @@ const Form = ({value, onChange, onCreate, onKeyPress, colors, onColor, onSelect}
                 <div className="create-button" onClick={onCreate}>추가</div>
             </div>
         </div>
-        
     );
 }
 

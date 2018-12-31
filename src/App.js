@@ -23,6 +23,19 @@ class App extends Component {
     selectedColor:""
   }
   
+  componentDidMount(){
+    //this._deleteCookie('todos');
+    this._getCookie("todos").then(
+      response => {
+        let getCookies = JSON.parse(response);
+        response !== null && this.setState({ todos: getCookies});
+      })
+  }
+  shouldComponentUpdate(nextProps, nextState){
+    //console.log("shouldComponentUpdate: " + JSON.stringify(nextProps) + " " + JSON.stringify(nextState));
+    return true;
+  }
+
   _onChange = (e) =>{
     this.setState(
       {
@@ -32,24 +45,28 @@ class App extends Component {
   }
   
   _onCreate = () => {
-
     const { input,todos,selectedColor } = this.state;
-    let lastId = todos[todos.length-1].id;
-
+    if(input.length === 0){
+      return;
+    }
+    let lastId = todos.length === 0 ? -1: todos[todos.length-1].id;
+    const updateTodo  = todos.concat({
+      id: ++lastId,
+      text: input,
+      checked: false,
+      color:selectedColor
+    });
+    this._setCookie("todos",updateTodo,300);
     this.setState({
         input:"", //input 비움
-        todos: todos.concat({
-          id: ++lastId,
-          text: input,
-          checked: false,
-          color:selectedColor
-        }),
+        todos: updateTodo,
         selectedColor:""
-      })
+    });
+    
   }
 
   _onKeyPress = (e) => {
-    if(e.key === "enter"){
+    if(e.key === "Enter"){
       this._onCreate();
     }
   }
@@ -64,15 +81,19 @@ class App extends Component {
       ...selected,
       checked: !selected.checked
     }
+    const updateTodo  = newTodos;
+    this._setCookie("todos",updateTodo,300);
     this.setState({
-      todos:newTodos
+      todos:updateTodo
     });
   }
 
   _onRemove = (id) => {
     const { todos } = this.state;
+    const updateTodo  = todos.filter(todo => todo.id !== id);
+    this._setCookie("todos",updateTodo,300);
     this.setState({
-      todos: todos.filter(todo => todo.id !== id)
+      todos: updateTodo
     });
   }
 
@@ -81,6 +102,27 @@ class App extends Component {
       selectedColor: color
     });
   }
+
+  // cookie 메소드 시작
+  //  재미로 만들었지만 cookie를 사용하여 todoList를 저장함
+  _setCookie = (name, value, exp) => {
+    var date = new Date();
+    date.setTime(date.getTime() + exp*24*60*60*1000);
+
+    var transStringValue = JSON.stringify(value);
+    document.cookie = name + '=' + transStringValue + '; expires=' + date.toUTCString() + ';path=/';
+  }
+  _getCookie = (name) => {
+    return new Promise(function (resolve, reject) {
+      var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+      value = value ? value[2] : null;
+      resolve(value);
+    });
+  }
+  _deleteCookie = (name) =>{
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+  // cookie 메소드 끝
 
   render() {
     const { input, todos, colors, selectedColor } = this.state;
