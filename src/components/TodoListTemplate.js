@@ -3,11 +3,10 @@ import "./TodoListTemplate.css"
 
 class TodoListTemplate extends Component{
     componentWillUpdate(){
-        console.log("updated");
     }
     shouldComponentUpdate(nextProps, nextState){
         //console.log("shouldComponentUpdate: " + JSON.stringify(nextProps) + " " + JSON.stringify(nextState));
-        console.log(nextProps)
+        //console.log(nextProps)
         return true;
     }
     render(){

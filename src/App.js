@@ -3,6 +3,7 @@ import './App.css';
 import TodoListTemplate from "./components/TodoListTemplate"
 import TodoItemList from "./components/TodoItemList"
 import Form from "./components/Form"
+import cookie from "react-cookies"
 
 
 class App extends Component {
@@ -22,13 +23,17 @@ class App extends Component {
     ],
     selectedColor:""
   }
+
   
+
   componentDidMount(){
     //this._deleteCookie('todos');
     this._getCookie("todos").then(
       response => {
-        let getCookies = JSON.parse(response);
-        response !== null && this.setState({ todos: getCookies});
+        if(response.length !== 0){
+          this.setState({ todos: response});
+        }
+        
       })
   }
   shouldComponentUpdate(nextProps, nextState){
@@ -106,21 +111,26 @@ class App extends Component {
   // cookie 메소드 시작
   //  재미로 만들었지만 cookie를 사용하여 todoList를 저장함
   _setCookie = (name, value, exp) => {
-    var date = new Date();
-    date.setTime(date.getTime() + exp*24*60*60*1000);
 
+    let expires = new Date();
+    let tmp = expires.getDate();
+    expires.setDate(tmp + exp); // 만료일은 쿠키 저장일로부터 100일 후
+    
+    const cookieOptions = {
+        expires
+    }
     var transStringValue = JSON.stringify(value);
-    document.cookie = name + '=' + transStringValue + '; expires=' + date.toUTCString() + ';path=/';
+    cookie.save(name, transStringValue, cookieOptions);
+
   }
   _getCookie = (name) => {
     return new Promise(function (resolve, reject) {
-      var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-      value = value ? value[2] : null;
+      var value = cookie.load(name);
       resolve(value);
     });
   }
   _deleteCookie = (name) =>{
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    cookie.remove(name)
   }
   // cookie 메소드 끝
 
