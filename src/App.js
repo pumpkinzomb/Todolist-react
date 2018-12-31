@@ -10,11 +10,7 @@ class App extends Component {
   
   state = {
     input : "",
-    todos : [
-      {id:0, text:"오늘의 할 일1", checked: false, color:""},
-      {id:1, text:"클릭하면 체크가 됩니다.", checked: true, color:""},
-      {id:2, text:"글씨 색도 바꿔보세요.", checked: false, color:"color3"}
-    ],
+    todos : [],
     colors : [
       "color1", //#343a40
       "color2", //#f03e3e
@@ -28,10 +24,17 @@ class App extends Component {
 
   componentDidMount(){
     //this._deleteCookie('todos');
+    let defaultTodos = [
+      {id:0, text:"오늘의 할 일1", checked: false, color:""},
+      {id:1, text:"클릭하면 체크가 됩니다.", checked: true, color:""},
+      {id:2, text:"글씨 색도 바꿔보세요.", checked: false, color:"color3"}
+    ]
     this._getCookie("todos").then(
       response => {
         if(response.length !== 0){
           this.setState({ todos: response});
+        }else{
+          this.setState({ todos: defaultTodos});
         }
         
       })
