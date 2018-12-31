@@ -119,8 +119,9 @@ class App extends Component {
     const cookieOptions = {
         expires
     }
-    var transStringValue = JSON.stringify(value);
-    cookie.save(name, transStringValue, cookieOptions);
+    
+    //var transStringValue = JSON.stringify(value);
+    cookie.save(name, value, cookieOptions);
 
   }
   _getCookie = (name) => {

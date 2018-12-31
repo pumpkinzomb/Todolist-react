@@ -23,8 +23,12 @@
   
   
   .remove {
+    width:1.5rem;
+    height:1.5rem;
     margin-right: 1rem;
     color: #e64980;
+    font-size:1.8rem;
+    line-height: 1.3rem;
     font-weight: 600;
     /* opacity: 0; */
   }
