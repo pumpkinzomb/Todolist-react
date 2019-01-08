@@ -17,12 +17,16 @@ class App extends Component {
       "color3", //#12b886
       "color4" //#228ae6
     ],
-    selectedColor:""
+    selectedColor:"",
+    formState:{
+      mode:"add",
+      editTarget:""
+    }
   }
 
   
-
-  componentDidMount(){
+  
+  componentWillMount(){
     //this._deleteCookie('todos');
     let defaultTodos = [
       {id:0, text:"오늘의 할 일1", checked: false, color:""},
@@ -31,17 +35,22 @@ class App extends Component {
     ]
     this._getCookie("todos").then(
       response => {
-        if(response.length !== 0){
+        if(response !== undefined){
           this.setState({ todos: response});
         }else{
           this.setState({ todos: defaultTodos});
         }
-        
       })
   }
-  shouldComponentUpdate(nextProps, nextState){
-    //console.log("shouldComponentUpdate: " + JSON.stringify(nextProps) + " " + JSON.stringify(nextState));
+  componentDidUpdate(){
+    if(this.editInput) this.editInput.focus();
+    if(this.addInput) this.addInput.focus();
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    console.log(this.state)
+    console.log(nextState)
     return true;
+
   }
 
   _onChange = (e) =>{
@@ -70,12 +79,15 @@ class App extends Component {
         todos: updateTodo,
         selectedColor:""
     });
-    
   }
 
   _onKeyPress = (e) => {
     if(e.key === "Enter"){
-      this._onCreate();
+      if(this.state.formState.mode==="add"){
+        this._onCreate();
+      }else{
+        this._onEditSubmit();
+      }
     }
   }
 
@@ -103,6 +115,57 @@ class App extends Component {
     this.setState({
       todos: updateTodo
     });
+  }
+
+  _onEdit = (id) => {
+    if(this.state.formState.mode==="add"){
+      const { todos } = this.state;
+      const index = todos.findIndex(todo => todo.id === id);
+      const selected = todos[index];
+      this.setState({
+        input:selected.text,
+        formState:{
+          mode:"edit",
+          editTarget:selected
+        },
+        selectedColor:selected.color
+      })
+    }else{
+      this.setState({
+        input:"",
+        formState:{
+          mode:"add",
+          editTarget:""
+        },
+        selectedColor:""
+      })
+    }
+    if(this.editInput) this.editInput.focus();
+  }
+  _onEditSubmit = () =>{
+    const { todos,formState,input,selectedColor } = this.state;
+    const index = todos.findIndex(todo => todo.id === formState.editTarget.id);
+    const selected = todos[index];
+    const newTodos = [...todos];
+    
+    newTodos[index] = {
+      ...selected,
+      text:input,
+      color:selectedColor
+    }
+    
+    const updateTodo  = newTodos;
+    this._setCookie("todos",updateTodo,300);
+    this.setState({
+      todos:updateTodo,
+      formState:{
+        mode:"add",
+        editTarget:""
+      },
+      input:"",
+      selectedColor:""
+    });
+    
   }
 
   _onSelect = (color) =>{
@@ -139,15 +202,18 @@ class App extends Component {
   // cookie 메소드 끝
 
   render() {
-    const { input, todos, colors, selectedColor } = this.state;
+    const { input, todos, colors, selectedColor,formState } = this.state;
     const {
       _onChange,
       _onCreate,
       _onKeyPress,
       _onToggle,
       _onRemove,
-      _onSelect
+      _onSelect,
+      _onEdit,
+      _onEditSubmit
     } = this;
+
     return (
       <TodoListTemplate form={
         <Form 
@@ -155,12 +221,20 @@ class App extends Component {
           onKeyPress={_onKeyPress} //Form
           onChange={_onChange} //Form
           onCreate={_onCreate} //Form
+          onEditSubmit = {_onEditSubmit} //Form
+          formState={formState} //Form
+          addTargetInput={ref=>{
+                          this.addInput = ref
+                      }} //Form
+          editTargetInput={ref=>{
+                          this.editInput = ref
+                      }} //Form
 
           colors={colors} //Palette
           onColor={selectedColor} //Palette
           onSelect={_onSelect} //Palette
         />}>
-          <TodoItemList todos={todos} onToggle={_onToggle} onRemove={_onRemove} />
+          <TodoItemList todos={todos} onToggle={_onToggle} onRemove={_onRemove} onEdit={_onEdit} />
       </TodoListTemplate>
     );
   }

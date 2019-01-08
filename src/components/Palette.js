@@ -11,7 +11,6 @@ class Palette extends Component{
     
     render(){
         const {colors, onSelect, selected} = this.props;
-        
         return(
             <div className="palette">
                 {

@@ -8,7 +8,7 @@ class TodoItemList extends Component {
     }
 
     render(){
-        const { todos, onToggle, onRemove } = this.props;
+        const { todos, onToggle, onRemove, onEdit } = this.props;
         return (
             <div>
                 {
@@ -17,6 +17,7 @@ class TodoItemList extends Component {
                             {...todo}
                             onToggle={onToggle}
                             onRemove={onRemove}
+                            onEdit={onEdit}
                             key={todo.id}
                         />
                     ))
