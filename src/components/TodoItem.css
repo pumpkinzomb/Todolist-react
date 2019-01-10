@@ -55,6 +55,9 @@
     text-decoration: line-through;
     color: #adb5bd;
   }
+  .todo-text.bold-font{
+    font-weight:bold;
+  }
   .check-mark {
     font-size: 1.5rem;
     line-height: 1rem;

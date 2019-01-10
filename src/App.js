@@ -18,9 +18,14 @@ class App extends Component {
       "color4" //#228ae6
     ],
     selectedColor:"",
+    bolded:false,
     formState:{
       mode:"add",
       editTarget:""
+    },
+    realignmentMode: {
+      state:false,
+      from:""
     }
   }
 
@@ -28,10 +33,10 @@ class App extends Component {
   
   componentWillMount(){
     //this._deleteCookie('todos');
-    let defaultTodos = [
-      {id:0, text:"오늘의 할 일1", checked: false, color:""},
-      {id:1, text:"클릭하면 체크가 됩니다.", checked: true, color:""},
-      {id:2, text:"글씨 색도 바꿔보세요.", checked: false, color:"color3"}
+    const defaultTodos = [
+      {id:2, text:"오늘의 할 일1", checked: false, color:"", bolded:true},
+      {id:1, text:"클릭하면 체크가 됩니다.", checked: true, color:"", bolded:false},
+      {id:0, text:"글씨 색도 바꿔보세요.", checked: false, color:"color3", bolded:false}
     ]
     this._getCookie("todos").then(
       response => {
@@ -47,8 +52,8 @@ class App extends Component {
     if(this.addInput) this.addInput.focus();
   }
   shouldComponentUpdate(nextProps,nextState) {
-    console.log(this.state)
-    console.log(nextState)
+    // console.log(this.state)
+    // console.log(nextState)
     return true;
 
   }
@@ -62,22 +67,26 @@ class App extends Component {
   }
   
   _onCreate = () => {
-    const { input,todos,selectedColor } = this.state;
+    const { input,todos,selectedColor,bolded } = this.state;
     if(input.length === 0){
       return;
     }
-    let lastId = todos.length === 0 ? -1: todos[todos.length-1].id;
-    const updateTodo  = todos.concat({
+    let reverseTodo = [...todos].reverse();
+    let lastId = reverseTodo.length === 0 ? -1: reverseTodo[reverseTodo.length-1].id;
+    const updateTodo  = reverseTodo.concat({
       id: ++lastId,
       text: input,
       checked: false,
-      color:selectedColor
+      color:selectedColor,
+      bolded:bolded
     });
-    this._setCookie("todos",updateTodo,300);
+    reverseTodo = [...updateTodo].reverse();
+    this._setCookie("todos",reverseTodo,300);
     this.setState({
         input:"", //input 비움
-        todos: updateTodo,
-        selectedColor:""
+        todos: reverseTodo,
+        selectedColor:"",
+        bolded:false
     });
   }
 
@@ -108,6 +117,13 @@ class App extends Component {
     });
   }
 
+  _onBolded = () => {
+
+    this.setState({
+      bolded:!this.state.bolded
+    });
+  }
+
   _onRemove = (id) => {
     const { todos } = this.state;
     const updateTodo  = todos.filter(todo => todo.id !== id);
@@ -128,22 +144,39 @@ class App extends Component {
           mode:"edit",
           editTarget:selected
         },
+        bolded:selected.bolded,
         selectedColor:selected.color
       })
     }else{
-      this.setState({
-        input:"",
-        formState:{
-          mode:"add",
-          editTarget:""
-        },
-        selectedColor:""
-      })
+      if(this.state.formState.editTarget.id !== id){
+        const { todos } = this.state;
+        const index = todos.findIndex(todo => todo.id === id);
+        const selected = todos[index];
+        this.setState({
+          input:selected.text,
+          formState:{
+            mode:"edit",
+            editTarget:selected
+          },
+          bolded:selected.bolded,
+          selectedColor:selected.color
+        })
+      }else{
+        this.setState({
+          input:"",
+          formState:{
+            mode:"add",
+            editTarget:""
+          },
+          selectedColor:"",
+          bolded:false
+        })
+      }
     }
     if(this.editInput) this.editInput.focus();
   }
   _onEditSubmit = () =>{
-    const { todos,formState,input,selectedColor } = this.state;
+    const { todos,formState,input,selectedColor,bolded } = this.state;
     const index = todos.findIndex(todo => todo.id === formState.editTarget.id);
     const selected = todos[index];
     const newTodos = [...todos];
@@ -151,7 +184,8 @@ class App extends Component {
     newTodos[index] = {
       ...selected,
       text:input,
-      color:selectedColor
+      color:selectedColor,
+      bolded:bolded
     }
     
     const updateTodo  = newTodos;
@@ -174,13 +208,57 @@ class App extends Component {
     });
   }
 
+  _toggleRealignmentMode = () =>{
+    this.setState({
+      realignmentMode: {
+        state:!this.state.realignmentMode.state,
+        from:""
+      }
+    });
+  }
+  _r_insertFrom = (id) => {
+    this.setState({
+      realignmentMode: {
+        state:true,
+        from:id
+      }
+    });
+  }
+  _r_insertTo = (id) => {
+    if(this.state.realignmentMode.from === id){
+      return this._toggleRealignmentMode();
+    }
+    const { todos, realignmentMode } = this.state;
+    const fromIndex = todos.findIndex(todo => todo.id === realignmentMode.from);
+    const selectFrom = todos[fromIndex];
+    const toIndex = todos.findIndex(todo => todo.id === id);
+    const newTodos = [...todos];
+    
+    newTodos.splice(fromIndex,1); //잘라서
+    newTodos.splice(toIndex,0,selectFrom); //붙인다
+
+    let newTodoIndex=newTodos.length;
+    const updateTodo = newTodos.map(newTodo=>{
+      newTodo.id = --newTodoIndex;
+      return newTodo
+    });
+    this._setCookie("todos",updateTodo,300);
+    this.setState({
+      todos:updateTodo,
+      realignmentMode: {
+        state:true,
+        from:id
+      }
+    });
+  }
+
   // cookie 메소드 시작
   //  재미로 만들었지만 cookie를 사용하여 todoList를 저장함
   _setCookie = (name, value, exp) => {
 
     let expires = new Date();
     let tmp = expires.getDate();
-    expires.setDate(tmp + exp); // 만료일은 쿠키 저장일로부터 100일 후
+    expires.setDate(tmp + exp); // 만료일은 쿠키 저장일로부터 300일 후
     
     const cookieOptions = {
         expires
@@ -202,16 +280,20 @@ class App extends Component {
   // cookie 메소드 끝
 
   render() {
-    const { input, todos, colors, selectedColor,formState } = this.state;
+    const { input, todos, colors, selectedColor, formState, realignmentMode, bolded } = this.state;
     const {
       _onChange,
       _onCreate,
       _onKeyPress,
       _onToggle,
+      _onBolded,
       _onRemove,
       _onSelect,
       _onEdit,
-      _onEditSubmit
+      _onEditSubmit,
+      _toggleRealignmentMode,
+      _r_insertFrom,
+      _r_insertTo
     } = this;
 
     return (
@@ -229,12 +311,22 @@ class App extends Component {
           editTargetInput={ref=>{
                           this.editInput = ref
                       }} //Form
+          onBolded = {_onBolded} //Form
+          bolded = {bolded} //Form
+          toggleRealignmentMode={_toggleRealignmentMode} //realignment-mode-btn
 
           colors={colors} //Palette
           onColor={selectedColor} //Palette
           onSelect={_onSelect} //Palette
         />}>
-          <TodoItemList todos={todos} onToggle={_onToggle} onRemove={_onRemove} onEdit={_onEdit} />
+          <TodoItemList 
+            todos={todos} 
+            onToggle={_onToggle} 
+            onRemove={_onRemove} 
+            onEdit={_onEdit} 
+            realignmentMode={realignmentMode} 
+            r_insertFrom={_r_insertFrom} 
+            r_insertTo={_r_insertTo} />
       </TodoListTemplate>
     );
   }

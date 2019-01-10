@@ -22,6 +22,10 @@
   .form input.color4{
     color:#228ae6;
   }
+
+  .form input.bold-font{
+    font-weight:bold;
+  }
   
   .create-button {
     width:25%;
@@ -42,4 +46,18 @@
   
   .create-button:hover {
     background: #a5d8ff;
+  }
+
+  .palette-with-btns{
+    display:flex;
+    align-items: center;
+  }
+  .sort-btn{
+    width:1.5rem;
+    height:1.5rem;
+    margin-right:1.5rem;
+    cursor: pointer;
+  }
+  .sort-btn>img{
+    width:100%;
   }

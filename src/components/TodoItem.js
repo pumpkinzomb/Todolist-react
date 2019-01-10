@@ -4,14 +4,14 @@ import "./TodoItem.css";
 class TodoItem extends Component{
     
     render(){
-        const { text, checked, id, onToggle, onRemove, onEdit, color } = this.props;
+        const { text, checked, id, bolded, onToggle, onRemove, onEdit, color } = this.props;
         return(
             <div className={`todo-item`} onClick={() => onToggle(id)}>
                 <div className="remove" onClick={(e) => {
                     e.stopPropagation();
                     onRemove(id);
                 }}> &times; </div>
-                <div className={`todo-text ${checked ? "checked" : ""} ${color}`}>
+                <div className={`todo-text ${color} ${checked ? "checked" : ""} ${bolded ? "bold-font" : ""}`}>
                     <div>{ text }</div>
                 </div>
                 {
@@ -20,7 +20,7 @@ class TodoItem extends Component{
                 <div className="edit-btn" onClick={(e) => {
                     e.stopPropagation();
                     onEdit(id);
-                }}><img src="/imgs/edit.png" alt="edit_pecil_Image" /></div>
+                }}><img src="imgs/edit.png" alt="edit_pecil_Image" /></div>
             </div>
         );
     }

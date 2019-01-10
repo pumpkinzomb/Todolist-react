@@ -2,15 +2,46 @@ import React from "react";
 import "./Form.css"
 import Palette from "./Palette"
 
-const Form = ({value, onChange, onCreate, onKeyPress, colors, onColor, onSelect,onEditSubmit,formState ,addTargetInput,editTargetInput}) => {
+const Form = ({
+                value, 
+                onChange, 
+                onCreate, 
+                onKeyPress, 
+                colors, 
+                onColor, 
+                onSelect,
+                bolded,
+                onBolded,
+                onEditSubmit,
+                formState ,
+                addTargetInput,
+                editTargetInput,
+                toggleRealignmentMode}) => {
     
     return(
         <div>
-            <Palette colors={colors} selected={onColor} onSelect={onSelect}  />
+            <div className="palette-with-btns">
+                <div className="sort-btn"><img src="imgs/list_sort2.png" alt="Rearrange list button" onClick={toggleRealignmentMode} /></div>
+                <Palette colors={colors} selected={onColor} onSelect={onSelect} onBolded={onBolded}  />
+            </div>
             {
                 formState.mode === "add" ? 
-                <AddForm value={value} onChange={onChange} onKeyPress={onKeyPress} onColor={onColor} onCreate={onCreate} addTargetInput={addTargetInput}  /> :
-                <EditForm value={value} onChange={onChange} onKeyPress={onKeyPress} onColor={onColor} onEditSubmit={onEditSubmit} editTargetInput={editTargetInput} />
+                <AddForm 
+                    value={value} 
+                    onChange={onChange} 
+                    onKeyPress={onKeyPress} 
+                    bolded={bolded} 
+                    onColor={onColor} 
+                    onCreate={onCreate} 
+                    addTargetInput={addTargetInput}  /> :
+                <EditForm 
+                    value={value} 
+                    onChange={onChange} 
+                    onKeyPress={onKeyPress} 
+                    bolded={bolded} 
+                    onColor={onColor} 
+                    onEditSubmit={onEditSubmit} 
+                    editTargetInput={editTargetInput} />
             }
         </div>
     );
@@ -22,7 +53,8 @@ const AddForm = ({
     onKeyPress,
     onColor,
     onCreate,
-    addTargetInput
+    addTargetInput,
+    bolded
 }) =>{
     return(
         <div className="form">
@@ -30,7 +62,7 @@ const AddForm = ({
                 value={value} 
                 onChange={onChange} 
                 onKeyPress={onKeyPress} 
-                className={onColor} 
+                className={`${onColor} ${bolded ? "bold-font" : ""}`} 
                 ref={addTargetInput}
             />
             <div className="create-button" onClick={onCreate}>추가</div>
@@ -43,7 +75,8 @@ const EditForm = ({
     onKeyPress,
     onColor,
     onEditSubmit,
-    editTargetInput
+    editTargetInput,
+    bolded
 }) => {
     return( 
         <div className="form">
@@ -51,7 +84,7 @@ const EditForm = ({
                 value={value} 
                 onChange={onChange} 
                 onKeyPress={onKeyPress} 
-                className={onColor}
+                className={`${onColor} ${bolded ? "bold-font" : ""}`}
                 ref = {editTargetInput}   
              />
             <div className="create-button" onClick={onEditSubmit}>Edit</div>

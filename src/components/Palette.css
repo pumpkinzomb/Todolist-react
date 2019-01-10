@@ -36,3 +36,14 @@
   .color + .color {
     margin-left: .5rem;
   }
+
+  .make-bold{
+    display:flex;
+    width:1rem;
+    height:1rem;
+    margin-left:1rem;
+    cursor:pointer;
+  }
+  .make-bold>img{
+    width:100%;
+  }

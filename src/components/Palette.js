@@ -10,7 +10,7 @@ const Color = ({color, onSelect ,selected}) => {
 class Palette extends Component{
     
     render(){
-        const {colors, onSelect, selected} = this.props;
+        const {colors, onSelect, selected, onBolded} = this.props;
         return(
             <div className="palette">
                 {
@@ -23,6 +23,7 @@ class Palette extends Component{
                     />  
                 ))
                 }
+                <div className="make-bold" onClick={onBolded}><img src="imgs/bold.png" alt="bold 처리하기" /></div>
             </div>
         );
     }    
