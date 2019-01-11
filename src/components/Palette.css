@@ -41,7 +41,7 @@
     display:flex;
     width:1rem;
     height:1rem;
-    margin-left:1rem;
+    margin-left:.8rem;
     cursor:pointer;
   }
   .make-bold>img{

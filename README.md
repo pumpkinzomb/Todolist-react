@@ -11,6 +11,7 @@ React 연습중 두번째 실습. TodoList-app 만들기
 7. 글 수정 기능 삽입 & input focus - 2019.01.09<br>
 8. /imgs/edit.png 경로를 imgs/edit.png 경로로 수정 - 2019.01.09<br>
 9. 할일목록 bold체 추가 & 순서바꾸기 기능 삽입 - 2019.01.11<br>
+10. 순서바꾸기 기능 수정 (간단한 ui조작) - 2019.01.11<br>
 <br>
 
 [실습한 예제보기](http://pumpkinzomb.github.io/todolist-app/)

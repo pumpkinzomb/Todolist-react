@@ -226,7 +226,12 @@ class App extends Component {
   }
   _r_insertTo = (id) => {
     if(this.state.realignmentMode.from === id){
-      return this._toggleRealignmentMode();
+      return this.setState({
+        realignmentMode: {
+          state:true,
+          from:""
+        }
+      });
     }
     const { todos, realignmentMode } = this.state;
     const fromIndex = todos.findIndex(todo => todo.id === realignmentMode.from);
@@ -247,7 +252,7 @@ class App extends Component {
       todos:updateTodo,
       realignmentMode: {
         state:true,
-        from:id
+        from:""
       }
     });
   }
